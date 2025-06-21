@@ -15,21 +15,26 @@ $data = json_decode(file_get_contents("php://input"));
 
 $result = $user->login($data->username, $data->password);
 
-if ($result->rowCount() > 0) {
+if ($result) {
     $resultData = array();
-    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-        extract($row);
-        $resultArray = array(
-            "message" => "1",
-            "userID" => strval($userID),
-            "username" => $username,
-            "password" => $password,
-            "email" => $email,
-            "phone" => $phone,
-            "rank" => $rank
-        );
-        array_push($resultData, $resultArray);
-    }
+
+    $resultArray = array(
+        // "message" => "1",
+        // "userID" => strval($userID),
+        // "username" => $username,
+        // "password" => $password,
+        // "email" => $email,
+        // "phone" => $phone,
+        // "rank" => $rank
+        "message" => "1",
+        "userID" => strval($result['userID']),
+        "username" => $result['username'],
+        "email" => $result['email'],
+        "phone" => $result['phone'],
+        "rank" => $result['rank']
+    );
+    array_push($resultData, $resultArray);
+
     echo json_encode($resultData);
 } else {
     $resultData = array();

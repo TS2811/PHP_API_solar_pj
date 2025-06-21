@@ -19,23 +19,37 @@ class user
     {
         $this->connDB = $connectDB;
     }
-
     public function login($username, $password)
     {
-        $sql = "SELECT * FROM user WHERE username = :username AND password = :password";
-
+        $sql = "SELECT * FROM user WHERE username = :username";
         $username = htmlspecialchars(strip_tags($username));
-        $password = htmlspecialchars(strip_tags($password));
-
         $stmt = $this->connDB->prepare($sql);
-
         $stmt->bindParam(':username', $username);
-        $stmt->bindParam(':password', $password);
-
         $stmt->execute();
 
-        return $stmt;
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($user && password_verify($password, $user['password'])) {
+            return $user; // เข้าระบบสำเร็จ
+        } else {
+            return false; // ล้มเหลว
+        }
     }
+    // public function login($username, $password)
+    // {
+    //     $sql = "SELECT * FROM user WHERE username = :username AND password = :password";
+
+    //     $username = htmlspecialchars(strip_tags($username));
+    //     $password = htmlspecialchars(strip_tags($password));
+
+    //     $stmt = $this->connDB->prepare($sql);
+
+    //     $stmt->bindParam(':username', $username);
+    //     $stmt->bindParam(':password', $password);
+
+    //     $stmt->execute();
+
+    //     return $stmt;
+    // }
 
     public function insertNewUser($username, $password, $email, $phone, $location, $imageName)
     {
@@ -47,6 +61,9 @@ class user
         $email = htmlspecialchars(strip_tags($email));
         $phone = htmlspecialchars(strip_tags($phone));
         $location = htmlspecialchars(strip_tags($location));
+
+        // เข้ารหัสรหัสผ่านก่อนบันทึก
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         // ตรวจสอบ username ซ้ำก่อน INSERT
         $checkQuery = "SELECT COUNT(*) FROM user WHERE username = :username";
@@ -71,7 +88,8 @@ class user
 
         $stmt = $this->connDB->prepare($query);
         $stmt->bindParam(':username', $username);
-        $stmt->bindParam(':password', $password);
+        // $stmt->bindParam(':password', $password);
+        $stmt->bindParam(':password', $hashedPassword);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':phone', $phone);
         $stmt->bindParam(':location', $location);
@@ -112,7 +130,7 @@ class user
         }
 
         if (empty($fields)) {
-            return false; // ไม่มีข้อมูลให้แก้ไข
+            return false;
         }
 
         $query .= implode(", ", $fields);
@@ -124,12 +142,13 @@ class user
         }
         if (!empty($password)) {
             $password = htmlspecialchars(strip_tags($password));
+            $password = password_hash($password, PASSWORD_DEFAULT);
         }
         if (!empty($email)) {
             $email = htmlspecialchars(strip_tags($email));
         }
         if (!empty($phone)) {
-            $password = htmlspecialchars(strip_tags($password));
+            $phone = htmlspecialchars(strip_tags($phone));
         }
         if (!empty($location)) {
             $location = htmlspecialchars(strip_tags($location));
@@ -137,8 +156,8 @@ class user
         if (!empty($imageName)) {
             $imageName = htmlspecialchars(strip_tags($imageName));
         }
-        $stmt = $this->connDB->prepare($query);
 
+        $stmt = $this->connDB->prepare($query);
         $stmt->bindParam(":userID", $userID, PDO::PARAM_INT);
         if (!empty($username)) {
             $stmt->bindParam(":username", $username);
@@ -159,11 +178,7 @@ class user
             $stmt->bindParam(":imageName", $imageName);
         }
 
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            return false;
-        }
+        return $stmt->execute();
     }
 
     public function getByUserID($userID)
