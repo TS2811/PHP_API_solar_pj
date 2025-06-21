@@ -1,0 +1,16 @@
+Array
+(
+    [current] => 3.74
+    [voltage] => 6.93
+    [Temp] => 31.06
+    [Humi] => 51.01
+    [lux1] => 23011.89
+    [lux2] => 23324.77
+    [lux3] => 26927.77
+    [DateTime] => 2025-03-03 15:00:00
+    [eqpID] => 0
+)
+Python Input: {"current":3.74,"voltage":6.93,"Temp":31.06,"Humi":51.01,"lux1":23011.89,"lux2":23324.77,"lux3":26927.77,"DateTime":"2025-03-03 15:00:00","eqpID":0}
+Python Output: {"debug_received_json": "{ current :3.74, voltage :6.93, Temp :31.06, Humi :51.01, lux1 :23011.89, lux2 :23324.77, lux3 :26927.77, DateTime : 2025-03-03 15:00:00 , eqpID :0}"}
+{"error": "Invalid JSON input", "debug_input": "{ current :3.74, voltage :6.93, Temp :31.06, Humi :51.01, lux1 :23011.89, lux2 :23324.77, lux3 :26927.77, DateTime : 2025-03-03 15:00:00 , eqpID :0}"}
+
