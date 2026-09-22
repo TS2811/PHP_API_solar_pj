@@ -40,8 +40,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 
 function sendDiscordWebhook($message)
 {
-    $webhookURL = "https://discordapp.com/api/webhooks/1352918426368213013/jnRnqCFrBWZlALNJaqLKGSHGy7FYzQWemkINAx7QKunMZhttdvmvZ_QRpEzHobufhe4G"; // ใส่ Webhook URL ของคุณ
-
+    $webhookURL = "";
     $data = ["content" => $message, "allowed_mentions" => ["parse" => ["everyone"]]];
 
     $options = [
